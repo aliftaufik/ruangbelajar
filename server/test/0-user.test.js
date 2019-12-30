@@ -143,9 +143,9 @@ describe('User Tests', function() {
             expect(res.body).to.have.property('messages')
             expect(res.body.messages).to.have.members([
               'Invalid username',
-              'invalid email',
-              'invalid password',
-              'invalid fullName',
+              'Invalid email',
+              'Invalid password',
+              'Invalid fullName',
             ])
           })
       })
