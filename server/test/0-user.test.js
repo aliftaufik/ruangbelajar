@@ -48,12 +48,16 @@ describe('User Tests', function() {
   const user = {
     username: 'user',
     email: 'user@mail.com',
-    password: 'Us3r1234',
+    password: 'Us3r!234',
     fullName: 'User The Real',
   }
 
   describe('User Sign Up', function() {
     context('Success', function() {
+      beforeEach('Delete new user data', async function() {
+        await User.deleteOne({ username: user.username })
+      })
+
       it('Receive correct data and respond with 201, message "Sign up success", and data: new user data and token', function() {
         return server
           .post('/user/signup')
@@ -63,12 +67,14 @@ describe('User Tests', function() {
             expect(res.body).to.have.property('message', 'Sign up success')
             expect(res.body).to.have.property('data')
             expect(res.body.data).to.have.property('user')
+            expect(res.body.data.user).to.include({ ...user })
+            expect(res.body.data.user).to.have.property('_id')
 
-            const newUser = res.body.data.user
-            expect(newUser).to.have.property('username', 'user')
-            expect(newUser).to.have.property('email', 'user@mail.com')
-            expect(newUser).to.have.property('password', 'Us3r1234')
-            expect(newUser).to.have.property('fullName', 'User The Real')
+            // const newUser = res.body.data.user
+            // expect(newUser).to.have.property('username', 'user')
+            // expect(newUser).to.have.property('email', 'user@mail.com')
+            // expect(newUser).to.have.property('password', 'Us3r1234')
+            // expect(newUser).to.have.property('fullName', 'User The Real')
 
             expect(res.body.data)
               .to.have.property('token')
@@ -77,6 +83,9 @@ describe('User Tests', function() {
       })
 
       it('Receive data without fullName and respond with 201, message "Sign up success", and data: new user data without fullName and token', function() {
+        const noFullNameUser = { ...user }
+        delete noFullNameUser.fullName
+
         return server
           .post('/user/signup')
           .send({ ...user, fullName: undefined })
@@ -85,12 +94,16 @@ describe('User Tests', function() {
             expect(res.body).to.have.property('message', 'Sign up success')
             expect(res.body).to.have.property('data')
             expect(res.body.data).to.have.property('user')
+            expect(res.body.data.user).to.include({
+              ...noFullNameUser,
+            })
+            expect(res.body.data.user).to.have.property('_id')
 
-            const newUser = res.body.data.user
-            expect(newUser).to.have.property('username', 'user')
-            expect(newUser).to.have.property('email', 'user@mail.com')
-            expect(newUser).to.have.property('password', 'Us3r1234')
-            expect(newUser).to.not.have.property('fullName')
+            // const newUser = res.body.data.user
+            // expect(newUser).to.have.property('username', 'user')
+            // expect(newUser).to.have.property('email', 'user@mail.com')
+            // expect(newUser).to.have.property('password', 'Us3r1234')
+            // expect(newUser).to.have.property('fullName', 'User The Real')
 
             expect(res.body.data)
               .to.have.property('token')
