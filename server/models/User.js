@@ -5,7 +5,7 @@ const userSchema = new Schema(
   {
     username: {
       type: String,
-      required: [true, 'Username required'],
+      required: [true, 'username required'],
       validate: [
         {
           validator(val) {
@@ -14,7 +14,7 @@ const userSchema = new Schema(
               return true
             })
           },
-          msg: 'Username already taken',
+          msg: 'username already taken',
         },
         {
           validator(val) {
@@ -26,7 +26,7 @@ const userSchema = new Schema(
     },
     email: {
       type: String,
-      required: [true, 'Email required'],
+      required: [true, 'email required'],
       validate: [
         {
           validator(val) {
@@ -35,7 +35,7 @@ const userSchema = new Schema(
               return true
             })
           },
-          msg: 'Email already registered',
+          msg: 'email already registered',
         },
         {
           validator(val) {
@@ -49,14 +49,14 @@ const userSchema = new Schema(
     },
     password: {
       type: String,
-      required: [true, 'Password required'],
+      required: [true, 'password required'],
       validate: {
         validator(val) {
           return /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/.test(
             val
           )
         },
-        msg: 'Password too weak',
+        msg: 'Invalid password',
       },
     },
     fullName: {
@@ -65,7 +65,7 @@ const userSchema = new Schema(
         validator(val) {
           return /^[a-zA-Z ']+$/.test(val)
         },
-        msg: 'Invalid full name format',
+        msg: 'Invalid fullName',
       },
     },
   },
