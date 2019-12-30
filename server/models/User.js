@@ -17,7 +17,7 @@ const userSchema = new Schema(
         },
         {
           validator(val) {
-            return /^[a-zA-Z_.-]&/.test(val)
+            return /^[a-zA-Z_.-]+$/.test(val)
           },
           msg: 'Invalid username',
         },
@@ -62,7 +62,7 @@ const userSchema = new Schema(
       type: String,
       validate: {
         validator(val) {
-          return /^[a-zA-Z ']$/.test(val)
+          return /^[a-zA-Z ']+$/.test(val)
         },
         msg: 'Invalid full name format',
       },

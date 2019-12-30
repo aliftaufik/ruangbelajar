@@ -23,7 +23,7 @@ after('Close http request', function() {
 const registeredUser = {
   username: 'dummy',
   email: 'dummy@mail.com',
-  password: 'Dum2y123',
+  password: 'Dum2y!23',
   fullName: 'Dummy The Guy',
 }
 before('Mock registered user', function(done) {
