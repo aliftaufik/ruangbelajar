@@ -165,4 +165,90 @@ describe('User Tests', function() {
       })
     })
   })
+
+  describe('User Sign In', function() {
+    context('Success', function() {
+      it('Receive data using username and respond with 200, message "Sign in success", and data: token', function() {
+        const signInUsernname = {
+          username: registeredUser.username,
+          password: registeredUser.password,
+        }
+
+        return server
+          .post('/user/signin')
+          .send(signInUsernname)
+          .then(res => {
+            expect(res).to.have.status(200)
+            expect(res.body).to.have.property('messages', 'Sign in success')
+            expect(res.body).to.have.property('data')
+            expect(res.body.data).to.have.keys(['token'])
+          })
+      })
+
+      it('Receive data using email and respond with 200, message "Sign in success", and data: token', function() {
+        const signInEmail = {
+          email: registeredUser.email,
+          password: registeredUser.password,
+        }
+
+        return server
+          .post('/user/signin')
+          .send(signInEmail)
+          .then(res => {
+            expect(res).to.have.status(200)
+            expect(res.body).to.have.property('messages', 'Sign in success')
+            expect(res.body).to.have.property('data')
+            expect(res.body.data).to.have.keys(['token'])
+          })
+      })
+
+      it('Receive data using emailUsername and respond with 200, message "Sign in success", and data: token', function() {
+        const signInEmailUsername = {
+          emailUsername: registeredUser.email,
+          password: registeredUser.password,
+        }
+
+        return server
+          .post('/user/signin')
+          .send(signInEmailUsername)
+          .then(res => {
+            expect(res).to.have.status(200)
+            expect(res.body).to.have.property('messages', 'Sign in success')
+            expect(res.body).to.have.property('data')
+            expect(res.body.data).to.have.keys(['token'])
+          })
+      })
+    })
+
+    context('Fail', function() {
+      it('Receive no data and respond with 422 and messages: "Wrong username/email/password"', function() {
+        return server
+          .post('/user/signin')
+          .send({})
+          .then(res => {
+            expect(res).to.have.status(422)
+            expect(res.body).to.have.property('messages')
+            expect(res.body.messages).to.have.members([
+              'Wrong username/email/password',
+            ])
+          })
+      })
+
+      it('Receive incorrect data and respond with 422 and messages: "Wrong username/email/password"', function() {
+        return server
+          .post('/user/signin')
+          .send({
+            username: 'notregistered',
+            password: 'notregistered',
+          })
+          .then(res => {
+            expect(res).to.have.status(422)
+            expect(res.body).to.have.property('messages')
+            expect(res.body.messages).to.have.members([
+              'Wrong username/email/password',
+            ])
+          })
+      })
+    })
+  })
 })
