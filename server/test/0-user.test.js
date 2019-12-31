@@ -53,7 +53,7 @@ describe('User Tests', function() {
   }
 
   describe('User Sign Up', function() {
-    context('Success', function() {
+    context('On Success', function() {
       beforeEach('Delete new user data', async function() {
         await User.deleteOne({ username: user.username })
       })
@@ -112,7 +112,7 @@ describe('User Tests', function() {
       })
     })
 
-    context('Fail', function() {
+    context('On Failed', function() {
       it('Receive no data and respond with 422 and messages: "username required", "email required", "password required"', function() {
         return server
           .post('/user/signup')
@@ -167,7 +167,7 @@ describe('User Tests', function() {
   })
 
   describe('User Sign In', function() {
-    context('Success', function() {
+    context('On Success', function() {
       it('Receive data using username and respond with 200, message "Sign in success", and data: token', function() {
         const signInUsernname = {
           username: registeredUser.username,
@@ -220,7 +220,7 @@ describe('User Tests', function() {
       })
     })
 
-    context('Fail', function() {
+    context('On Failed', function() {
       it('Receive no data and respond with 422 and messages: "Wrong username/email/password"', function() {
         return server
           .post('/user/signin')
@@ -246,6 +246,72 @@ describe('User Tests', function() {
             expect(res.body).to.have.property('messages')
             expect(res.body.messages).to.have.members([
               'Wrong username/email/password',
+            ])
+          })
+      })
+    })
+  })
+
+  describe('User Check Session', function() {
+    context(
+      'This will include authenticate test, so further test with authentication will not be asserted'
+    )
+    let token = null
+
+    before('Mock token', function(done) {
+      User.findOne({ email: registeredUser.email })
+        .then(user => {
+          token = sign({ _id: user._id }, process.env.JWT_SECRET)
+          console.log('Mock token')
+          done()
+        })
+        .catch(done)
+    })
+
+    context('On Success', function() {
+      it('Receive correct header and respond with 200 and data: _id, username, email, fullName', function() {
+        const { username, email, fullName } = registeredUser
+        return server
+          .get('/user/checksession')
+          .set({ Authorization: 'token ' + token })
+          .then(res => {
+            expect(res).to.have.status(200)
+            expect(res.body).to.have.property('data')
+            expect(res.body.data).to.include({ username, email, fullName })
+            expect(res.body.data).to.have.property('_id')
+          })
+      })
+    })
+
+    context('On Failed', function() {
+      it('Receive no required header and respond with 401 and messages: "Valid token required"', function() {
+        return server.get('/user/checksession').then(res => {
+          expect(res).to.have.status(401)
+          expect(res.body).to.have.property('messages')
+          expect(res.body.messages).to.have.members(['Valid token required'])
+        })
+      })
+
+      it('Receive header with invalid token value and respond with 401 and messages: "Valid token required"', function() {
+        return server
+          .get('/user/checksession')
+          .set({ Authorization: 'token X' + token.slice(1) })
+          .then(res => {
+            expect(res).to.have.status(401)
+            expect(res.body).to.have.property('messages')
+            expect(res.body.messages).to.have.members(['Valid token required'])
+          })
+      })
+
+      it('Receive header with token but without "token" prefix and respond with 422 and messages: "token require \'token\' prefix', function() {
+        return server
+          .get('/user/checksession')
+          .set({ Authorization: token })
+          .then(res => {
+            expect(res).to.have.status(401)
+            expect(res.body).to.have.property('messages')
+            expect(res.body.messages).to.have.members([
+              "token require 'token' prefix",
             ])
           })
       })
