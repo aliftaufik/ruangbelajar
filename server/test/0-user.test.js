@@ -252,10 +252,7 @@ describe('User Tests', function() {
     })
   })
 
-  describe('User Check Session', function() {
-    context(
-      'This will include authenticate test, so further test with authentication will not be asserted'
-    )
+  describe('User Check Session\nThis will include authenticate test, so further test with authentication will not be asserted', function() {
     let token = null
 
     before('Mock token', function(done) {
