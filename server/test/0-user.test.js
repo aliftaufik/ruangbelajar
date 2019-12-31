@@ -54,7 +54,7 @@ describe('User Tests', function() {
 
   describe('User Sign Up', function() {
     context('On Success', function() {
-      beforeEach('Delete new user data', async function() {
+      afterEach('Delete new user data', async function() {
         await User.deleteOne({ username: user.username })
       })
 
@@ -305,11 +305,32 @@ describe('User Tests', function() {
           .get('/user/checksession')
           .set({ Authorization: token })
           .then(res => {
-            expect(res).to.have.status(401)
+            expect(res).to.have.status(422)
             expect(res.body).to.have.property('messages')
             expect(res.body.messages).to.have.members([
               "token require 'token' prefix",
             ])
+          })
+      })
+
+      it('Receive header with removed user\'s token and respond with 401 and messages: "User has been removed"', function() {
+        let deletedUserToken = null
+        return User.create(user)
+          .then(user => {
+            deletedUserToken = sign({ _id: user._id }, process.env.JWT_SECRET)
+            return user.remove()
+          })
+          .then(() => {
+            return server
+              .get('/user/checksession')
+              .set({ Authorization: 'token ' + deletedUserToken })
+              .then(res => {
+                expect(res).to.have.status(401)
+                expect(res.body).to.have.property('messages')
+                expect(res.body.messages).to.have.members([
+                  'User has been removed',
+                ])
+              })
           })
       })
     })
