@@ -179,7 +179,7 @@ describe('User Tests', function() {
           .send(signInUsernname)
           .then(res => {
             expect(res).to.have.status(200)
-            expect(res.body).to.have.property('messages', 'Sign in success')
+            expect(res.body).to.have.property('message', 'Sign in success')
             expect(res.body).to.have.property('data')
             expect(res.body.data).to.have.keys(['token'])
           })
@@ -196,7 +196,7 @@ describe('User Tests', function() {
           .send(signInEmail)
           .then(res => {
             expect(res).to.have.status(200)
-            expect(res.body).to.have.property('messages', 'Sign in success')
+            expect(res.body).to.have.property('message', 'Sign in success')
             expect(res.body).to.have.property('data')
             expect(res.body.data).to.have.keys(['token'])
           })
@@ -213,7 +213,7 @@ describe('User Tests', function() {
           .send(signInEmailUsername)
           .then(res => {
             expect(res).to.have.status(200)
-            expect(res.body).to.have.property('messages', 'Sign in success')
+            expect(res.body).to.have.property('message', 'Sign in success')
             expect(res.body).to.have.property('data')
             expect(res.body.data).to.have.keys(['token'])
           })
